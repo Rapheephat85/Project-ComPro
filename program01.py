@@ -660,7 +660,7 @@ def menu_borrowing_history_report():
             status
         ])
 
-    # HEADER
+    ############################################# HEADER ###########################################################
     now = datetime.now(timezone(timedelta(hours=7)))
     offset = now.strftime("%z")
     offset = offset[:3] + ":" + offset[3:]
@@ -673,7 +673,7 @@ def menu_borrowing_history_report():
     table_lines.append("Encoding     : UTF-8 (fixed-length)")
     table_lines.append("")
 
-    # TABLE
+    ############################################# TABLE ############################################################
     headers = [
         "Timestamp",
         "Book ID",
@@ -684,7 +684,6 @@ def menu_borrowing_history_report():
         "Return Date",
         "Status"
     ]
-
     widths = [len(h) for h in headers]
 
     for row in rows:
@@ -703,7 +702,7 @@ def menu_borrowing_history_report():
 
     table_lines.append(sep)
 
-    # SUMMARY
+    ############################################# SUMMARY ############################################################
     borrow_count = sum(1 for loan in loans if loan["op_code"] == 1)
     return_count = sum(1 for loan in loans if loan["op_code"] == 2)
 
@@ -714,266 +713,16 @@ def menu_borrowing_history_report():
     table_lines.append(f"- Total Borrow           : {borrow_count}")
     table_lines.append(f"- Total Return           : {return_count}")
 
-    # TERMINAL PRINT
+    ############################################# TERMINAL #######################################################
     print()
     for text in table_lines:
         print(text)
 
-    # SAVE FILE TXT
-    report_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "borrowing_history_report.txt"
-    )
-
-    with open(report_path, "w", encoding="utf-8") as f:
-        for text in table_lines:
-            f.write(text + "\n")
-
-
-
-    ############################################# HEADER ###########################################################
-    now = datetime.now(timezone(timedelta(hours=7)))
-    offset = now.strftime("%z")
-    offset = offset[:3] + ":" + offset[3:]
-
-
-    ############################################# TABLE ############################################################
-    headers = ["Book ID", "Book Title", "Author", "Year", "Copies"]
-
-    widths = [len(h) for h in headers]
-    for r in rows:
-        for i, c in enumerate(r):
-            if i < len(widths):  # <-- เพิ่มบรรทัดนี้ป้องกัน IndexError
-                widths[i] = max(widths[i], len(str(c)))
-                
-
-    # sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
-
-    # table_lines.append(sep)
-    # table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
-    # table_lines.append(sep)
-    # for r in rows:
-    #     table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r[:len(widths)])) + " |")
-    # table_lines.append(sep)
-
-    ############################################# SUMMARY ##########################################################
-
-    # borrow_count = sum(1 for loan in loans if loan["op_code"] == 1)
-    # return_count = sum(1 for loan in loans if loan["op_code"] == 2)
-
-    # table_lines.append("")
-    # table_lines.append("Summary")
-    # table_lines.append(f"- Total History Records  : {len(rows)}")
-    # table_lines.append(f"- Total Transactions     : {len(loans)}")
-    # table_lines.append(f"- Total Borrow           : {borrow_count}")
-    # table_lines.append(f"- Total Return           : {return_count}")
- 
-
-    ############################################# TERMINAL #########################################################
-    # print()
-    # for text in table_lines:
-    #     print(text)
-
     ############################################# SAVE FILE TXT ####################################################
-    report_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "borrowing_history_report.txt"
-    )
-
-    with open(report_path, "w", encoding="utf-8") as f:
+    with open("borrowing_history_report.txt", "w", encoding="utf-8") as f:
         for text in table_lines:
             f.write(text + "\n")
-
     print("\n✅ Report generated: borrowing_history_report.txt")
-
-
-
-# ############################################# BOOK AVAILABILITY REPORT #############################################
-
-# def menu_book_availability_report():
-#     books = read_all_books()
-#     loans = read_all_loans()
-
-#     active_books = [
-#         b for b in books
-#         if b["status"] == 1
-#     ]
-
-#     if not active_books:
-#         print("\nNo active books found.")
-#         return
-
-#     current_loans = get_current_loans(loans)
-
-#     rows = []
-
-#     total_copies = 0
-#     total_borrowed = 0
-#     total_available = 0
-
-#     for book in active_books:
-
-#         book_id = book["book_id"]
-#         title = book["title"]
-#         copies = book["copies"]
-
-#         borrowed = sum(
-#             1
-#             for loan in current_loans
-#             if loan["book_id"] == book_id
-#         )
-
-#         available = copies - borrowed
-
-#         if available < 0:
-#             available = 0
-
-#         status = "Available" if available > 0 else "Not Available"
-
-#         rows.append([
-#             book_id,
-#             title,
-#             copies,
-#             borrowed,
-#             available,
-#             status
-#         ])
-
-#         total_copies += copies
-#         total_borrowed += borrowed
-#         total_available += available
-
-#     # HEADER
-#     now = datetime.now(timezone(timedelta(hours=7)))
-#     offset = now.strftime("%z")
-#     offset = offset[:3] + ":" + offset[3:]
-
-#     table_lines = []
-
-#     table_lines.append("Library Borrow System — Book Availability Report")
-#     table_lines.append(
-#         f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})"
-#     )
-#     table_lines.append("App Version  : 1.0")
-#     table_lines.append("Description  : Current availability of active books")
-#     table_lines.append("")
-
-#     # TABLE
-#     headers = [
-#         "Book ID",
-#         "Book Title",
-#         "Total Copies",
-#         "Borrowed",
-#         "Available",
-#         "Status"
-#     ]
-
-#     widths = [len(h) for h in headers]
-
-#     for row in rows:
-#         for i, value in enumerate(row):
-#             widths[i] = max(widths[i], len(str(value)))
-
-#     sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
-
-#     table_lines.append(sep)
-
-#     table_lines.append(
-#         "| " +
-#         " | ".join(
-#             headers[i].ljust(widths[i])
-#             for i in range(len(headers))
-#         ) +
-#         " |"
-#     )
-
-#     table_lines.append(sep)
-
-#     for row in rows:
-#         table_lines.append(
-#             "| " +
-#             " | ".join(
-#                 str(row[i]).ljust(widths[i])
-#                 for i in range(len(row))
-#             ) +
-#             " |"
-#         )
-
-#     table_lines.append(sep)
-
-#     # SUMMARY
-#     unavailable_books = sum(
-#         1 for row in rows
-#         if row[4] == 0
-#     )
-
-#     table_lines.append("")
-#     table_lines.append("Summary")
-#     table_lines.append(f"- Total Active Book Titles : {len(active_books)}")
-#     table_lines.append(f"- Total Book Copies        : {total_copies}")
-#     table_lines.append(f"- Borrowed Copies          : {total_borrowed}")
-#     table_lines.append(f"- Available Copies         : {total_available}")
-#     table_lines.append(f"- Unavailable Book Titles  : {unavailable_books}")
-
-#     # TERMINAL
-#     print()
-
-#     for text in table_lines:
-#         print(text)
-
-#     # SAVE TXT
-#     report_path = os.path.join(
-#         os.path.dirname(os.path.abspath(__file__)),
-#         "book_availability_report.txt"
-#     )
-
-#     with open(report_path, "w", encoding="utf-8") as f:
-#         for text in table_lines:
-#             f.write(text + "\n")
-
-#     print(f"\n✅ Report generated: {report_path}")
-
-
-    ############################################# HEADER ###########################################################
-    now = datetime.now(timezone(timedelta(hours=7)))
-    offset = now.strftime("%z")
-    offset = offset[:3] + ":" + offset[3:]
-
-   
-
-    ############################################# TABLE ############################################################
-    # headers = ["Member ID", "Member Name", "Email", "Book ID", "Book Title", "Loan Date", "Due Date", "Overdue"]
-
-    # widths = [len(h) for h in headers]
-    # for r in rows:
-    #     for i, c in enumerate(r):
-    #         widths[i] = max(widths[i], len(str(c)))
-
-    # sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
-
-    # table_lines.append(sep)
-    # table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
-    # table_lines.append(sep)
-    # for r in rows:
-    #     table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r)) + " |")
-    # table_lines.append(sep)
-
-    ############################################# SUMMARY ##########################################################
-    # table_lines.append("")
-    # table_lines.append("Summary")
-    # table_lines.append(f"- Total Overdue Items : {len(rows)}")
-
-    ############################################# TERMINAL #########################################################
-    print()
-    for text in table_lines:
-        print(text)
-
-    ############################################# SAVE FILE TXT ####################################################
-    # with open("overdue_report.txt", "w", encoding="utf-8") as f:
-    #     for text in table_lines:
-    #         f.write(text + "\n")
-
-    # print("\n✅ Report generated: overdue_report.txt")
 
 
 ############################################# USERS REPORT #############################################################
