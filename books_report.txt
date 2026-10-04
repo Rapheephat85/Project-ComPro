@@ -1,0 +1,38 @@
+Library Borrow System — Books Report
+Generated At : 2026-10-04 13:47:04 (+07:00)
+App Version  : 1.0
+Endianness   : Little-Endian
+Encoding     : UTF-8 (fixed-length)
+Period       : Last 7 Days
+
++------+---------------------------------------------+--------------+---------------+--------+
+| ID   | Book Title                                  | Total Copies | 1 Week Borrow | Usage  |
++------+---------------------------------------------+--------------+---------------+--------+
+| 1001 | COMPUTER NETWORKS AND INTERNETS             | 10           | 1             | 10.00% |
+| 1002 | IOS PROGRAMMING                             | 10           | 0             | 0.00%  |
+| 1003 | AI-ASSISTED PROGRAMMING                     | 12           | 0             | 0.00%  |
+| 1004 | INTRODUCTION TO PROGRAMMING WITH JAVA       | 20           | 0             | 0.00%  |
+| 1005 | MUST KNOW HIGH SCHOOL COMPUTER PROGRAMMI... | 15           | 0             | 0.00%  |
+| 1006 | DIGITAL MAVERICK                            | 10           | 0             | 0.00%  |
+| 1007 | CONCEPTS OF PROGRAMMING LANGUAGES           | 12           | 0             | 0.00%  |
+| 1008 | BAYESIAN METHODS FOR HACKERS                | 20           | 0             | 0.00%  |
+| 1009 | C PROGRAMMING ABSOLUTE BEGINNER'S GUIDE     | 10           | 0             | 0.00%  |
+| 1010 | R PROGRAMMING FOR MASS SPECTROMETRY         | 18           | 0             | 0.00%  |
+| 1011 | DATABASE SYSTEMS                            | 25           | 0             | 0.00%  |
+| 1012 | MODERN DATABASE MANAGEMENT                  | 15           | 0             | 0.00%  |
+| 1013 | PATRIOT                                     | 20           | 0             | 0.00%  |
+| 1014 | PLUCKED                                     | 10           | 0             | 0.00%  |
+| 1015 | COMPUTER SYSTEMS                            | 15           | 0             | 0.00%  |
+| 1016 | ENGLISH LANGUAGE SYSTEMS                    | 20           | 0             | 0.00%  |
+| 1017 | DIGITAL SAT STUDY GUIDE                     | 16           | 0             | 0.00%  |
+| 1018 | BUSINESS PARTNER A1                         | 20           | 0             | 0.00%  |
+| 1019 | COMPUTER APPLICATION                        | 15           | 0             | 0.00%  |
+| 1020 | SWIFT FOR PROGRAMMERS                       | 20           | 0             | 0.00%  |
++------+---------------------------------------------+--------------+---------------+--------+
+
+Summary
+- Total Book Titles         : 20
+- Total Book Copies         : 313
+- Borrowed in Last 7 Days   : 1
+- Book Usage Percentage     : 0.32%
+- Total Borrowed Times      : 1

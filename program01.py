@@ -2,6 +2,7 @@ import struct
 import time
 import os
 from datetime import datetime, timezone, timedelta
+from wsgiref import headers
 
 ############################################# BINARY FILE ##############################################################
 books_struck = struct.Struct("<i60si40siiiI")
@@ -627,25 +628,25 @@ def menu_borrowing_history_report():
     members = read_all_members()
 
     if not loans:
+        print("\nไม่มีข้อมูลประวัติการยืม-คืน")
         return
 
     rows = []
 
     for loan in loans:
-        book = next(
-            (b for b in books if b["book_id"] == loan["book_id"]),
-            None
-        )
+        book = next((b for b in books if b["book_id"] == loan["book_id"]), None)
+        member = next((m for m in members if m["member_id"] == loan["member_id"]), None)
 
-        member = next(
-            (m for m in members if m["member_id"] == loan["member_id"]),
-            None
-        )
+        # ทำความสะอาดสตริงและตัดความยาวชื่อหนังสือ
+        book_title = book["title"].rstrip("\x00").strip() if book else "Unknown"
+        if len(book_title) > 25:
+            book_title = book_title[:22] + "..."
 
-        book_title = book["title"] if book else "Unknown"
-        member_name = member["name"] if member else "Unknown"
+        # อ้างอิงและทำความสะอาดชื่อสมาชิกแบบเดียวกับ menu_users_report
+        member_name = member["name"].rstrip("\x00").strip() if member else "Unknown"
+        if len(member_name) > 20:
+            member_name = member_name[:17] + "..."
 
-        loan_type = "Borrow" if loan["op_code"] == 1 else "Return"
         status = "Borrowed" if loan["is_rented_after"] == 1 else "Returned"
 
         rows.append([
@@ -656,7 +657,6 @@ def menu_borrowing_history_report():
             member_name,
             loan["loan_date"],
             loan["return_date"],
-            loan_type,
             status
         ])
 
@@ -666,13 +666,11 @@ def menu_borrowing_history_report():
     offset = offset[:3] + ":" + offset[3:]
 
     table_lines = []
-
     table_lines.append("Library Borrow System — Borrowing History Report")
-    table_lines.append(
-        f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})"
-    )
+    table_lines.append(f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})")
     table_lines.append("App Version  : 1.0")
-    table_lines.append("Description  : Complete borrowing and returning history")
+    table_lines.append("Endianness   : Little-Endian")
+    table_lines.append("Encoding     : UTF-8 (fixed-length)")
     table_lines.append("")
 
     # TABLE
@@ -684,7 +682,6 @@ def menu_borrowing_history_report():
         "Member Name",
         "Loan Date",
         "Return Date",
-        "Type",
         "Status"
     ]
 
@@ -692,53 +689,37 @@ def menu_borrowing_history_report():
 
     for row in rows:
         for i, value in enumerate(row):
-            widths[i] = max(widths[i], len(str(value)))
+            if i < len(widths):
+                widths[i] = max(widths[i], len(str(value)))
 
     sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
 
     table_lines.append(sep)
-
-    table_lines.append(
-        "| " +
-        " | ".join(
-            headers[i].ljust(widths[i])
-            for i in range(len(headers))
-        ) +
-        " |"
-    )
-
+    table_lines.append("| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |")
     table_lines.append(sep)
 
     for row in rows:
-        table_lines.append(
-            "| " +
-            " | ".join(
-                str(row[i]).ljust(widths[i])
-                for i in range(len(row))
-            ) +
-            " |"
-        )
+        table_lines.append("| " + " | ".join(str(row[i]).ljust(widths[i]) for i in range(len(headers))) + " |")
 
     table_lines.append(sep)
 
     # SUMMARY
-    borrow_count = sum(
-        1 for loan in loans
-        if loan["op_code"] == 1
-    )
-
-    return_count = sum(
-        1 for loan in loans
-        if loan["op_code"] == 2
-    )
+    borrow_count = sum(1 for loan in loans if loan["op_code"] == 1)
+    return_count = sum(1 for loan in loans if loan["op_code"] == 2)
 
     table_lines.append("")
     table_lines.append("Summary")
-    table_lines.append(f"- Total Transactions : {len(loans)}")
-    table_lines.append(f"- Total Borrow       : {borrow_count}")
-    table_lines.append(f"- Total Return       : {return_count}")
+    table_lines.append(f"- Total History Records  : {len(rows)}")
+    table_lines.append(f"- Total Transactions     : {len(loans)}")
+    table_lines.append(f"- Total Borrow           : {borrow_count}")
+    table_lines.append(f"- Total Return           : {return_count}")
 
-    # SAVE TXT ONLY
+    # TERMINAL PRINT
+    print()
+    for text in table_lines:
+        print(text)
+
+    # SAVE FILE TXT
     report_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         "borrowing_history_report.txt"
@@ -748,19 +729,13 @@ def menu_borrowing_history_report():
         for text in table_lines:
             f.write(text + "\n")
 
+
+
     ############################################# HEADER ###########################################################
     now = datetime.now(timezone(timedelta(hours=7)))
     offset = now.strftime("%z")
     offset = offset[:3] + ":" + offset[3:]
 
-    table_lines = []
-    table_lines.append("Library Borrow System — Dead Stock Books Report")
-    table_lines.append(f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})")
-    table_lines.append("App Version  : 1.0")
-    table_lines.append("Endianness   : Little-Endian")
-    table_lines.append("Encoding     : UTF-8 (fixed-length)")
-    table_lines.append("Description  : Active books that have never been borrowed")
-    table_lines.append("")
 
     ############################################# TABLE ############################################################
     headers = ["Book ID", "Book Title", "Author", "Year", "Copies"]
@@ -768,209 +743,203 @@ def menu_borrowing_history_report():
     widths = [len(h) for h in headers]
     for r in rows:
         for i, c in enumerate(r):
-            widths[i] = max(widths[i], len(str(c)))
+            if i < len(widths):  # <-- เพิ่มบรรทัดนี้ป้องกัน IndexError
+                widths[i] = max(widths[i], len(str(c)))
+                
 
-    sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+    # sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
 
-    table_lines.append(sep)
-    table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
-    table_lines.append(sep)
-    for r in rows:
-        table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r)) + " |")
-    table_lines.append(sep)
+    # table_lines.append(sep)
+    # table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
+    # table_lines.append(sep)
+    # for r in rows:
+    #     table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r[:len(widths)])) + " |")
+    # table_lines.append(sep)
 
     ############################################# SUMMARY ##########################################################
-    total_active_books = len(active_books)
-    dead_stock_count = len(dead_stock_books)
-    dead_stock_pct = (dead_stock_count / total_active_books * 100) if total_active_books > 0 else 0
 
-    table_lines.append("")
-    table_lines.append("Summary")
-    table_lines.append(f"- Total Active Book Titles : {total_active_books}")
-    table_lines.append(f"- Dead Stock Book Titles   : {dead_stock_count}")
-    table_lines.append(f"- Dead Stock Percentage    : {dead_stock_pct:.2f}%")
-    table_lines.append(f"- Total Unused Copies      : {total_dead_stock_copies}")
+    # borrow_count = sum(1 for loan in loans if loan["op_code"] == 1)
+    # return_count = sum(1 for loan in loans if loan["op_code"] == 2)
+
+    # table_lines.append("")
+    # table_lines.append("Summary")
+    # table_lines.append(f"- Total History Records  : {len(rows)}")
+    # table_lines.append(f"- Total Transactions     : {len(loans)}")
+    # table_lines.append(f"- Total Borrow           : {borrow_count}")
+    # table_lines.append(f"- Total Return           : {return_count}")
+ 
 
     ############################################# TERMINAL #########################################################
-    print()
-    for text in table_lines:
-        print(text)
+    # print()
+    # for text in table_lines:
+    #     print(text)
 
     ############################################# SAVE FILE TXT ####################################################
     report_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "dead_stock_report.txt"
+    "borrowing_history_report.txt"
     )
 
     with open(report_path, "w", encoding="utf-8") as f:
         for text in table_lines:
             f.write(text + "\n")
 
-    print(f"\n✅ Report generated: {report_path}")
-
-    os.startfile(report_path)
+    print("\n✅ Report generated: borrowing_history_report.txt")
 
 
-############################################# BOOK AVAILABILITY REPORT #############################################
 
-def menu_book_availability_report():
-    books = read_all_books()
-    loans = read_all_loans()
+# ############################################# BOOK AVAILABILITY REPORT #############################################
 
-    active_books = [
-        b for b in books
-        if b["status"] == 1
-    ]
+# def menu_book_availability_report():
+#     books = read_all_books()
+#     loans = read_all_loans()
 
-    if not active_books:
-        print("\nNo active books found.")
-        return
+#     active_books = [
+#         b for b in books
+#         if b["status"] == 1
+#     ]
 
-    current_loans = get_current_loans(loans)
+#     if not active_books:
+#         print("\nNo active books found.")
+#         return
 
-    rows = []
+#     current_loans = get_current_loans(loans)
 
-    total_copies = 0
-    total_borrowed = 0
-    total_available = 0
+#     rows = []
 
-    for book in active_books:
+#     total_copies = 0
+#     total_borrowed = 0
+#     total_available = 0
 
-        book_id = book["book_id"]
-        title = book["title"]
-        copies = book["copies"]
+#     for book in active_books:
 
-        borrowed = sum(
-            1
-            for loan in current_loans
-            if loan["book_id"] == book_id
-        )
+#         book_id = book["book_id"]
+#         title = book["title"]
+#         copies = book["copies"]
 
-        available = copies - borrowed
+#         borrowed = sum(
+#             1
+#             for loan in current_loans
+#             if loan["book_id"] == book_id
+#         )
 
-        if available < 0:
-            available = 0
+#         available = copies - borrowed
 
-        status = "Available" if available > 0 else "Not Available"
+#         if available < 0:
+#             available = 0
 
-        rows.append([
-            book_id,
-            title,
-            copies,
-            borrowed,
-            available,
-            status
-        ])
+#         status = "Available" if available > 0 else "Not Available"
 
-        total_copies += copies
-        total_borrowed += borrowed
-        total_available += available
+#         rows.append([
+#             book_id,
+#             title,
+#             copies,
+#             borrowed,
+#             available,
+#             status
+#         ])
 
-    # HEADER
-    now = datetime.now(timezone(timedelta(hours=7)))
-    offset = now.strftime("%z")
-    offset = offset[:3] + ":" + offset[3:]
+#         total_copies += copies
+#         total_borrowed += borrowed
+#         total_available += available
 
-    table_lines = []
+#     # HEADER
+#     now = datetime.now(timezone(timedelta(hours=7)))
+#     offset = now.strftime("%z")
+#     offset = offset[:3] + ":" + offset[3:]
 
-    table_lines.append("Library Borrow System — Book Availability Report")
-    table_lines.append(
-        f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})"
-    )
-    table_lines.append("App Version  : 1.0")
-    table_lines.append("Description  : Current availability of active books")
-    table_lines.append("")
+#     table_lines = []
 
-    # TABLE
-    headers = [
-        "Book ID",
-        "Book Title",
-        "Total Copies",
-        "Borrowed",
-        "Available",
-        "Status"
-    ]
+#     table_lines.append("Library Borrow System — Book Availability Report")
+#     table_lines.append(
+#         f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})"
+#     )
+#     table_lines.append("App Version  : 1.0")
+#     table_lines.append("Description  : Current availability of active books")
+#     table_lines.append("")
 
-    widths = [len(h) for h in headers]
+#     # TABLE
+#     headers = [
+#         "Book ID",
+#         "Book Title",
+#         "Total Copies",
+#         "Borrowed",
+#         "Available",
+#         "Status"
+#     ]
 
-    for row in rows:
-        for i, value in enumerate(row):
-            widths[i] = max(widths[i], len(str(value)))
+#     widths = [len(h) for h in headers]
 
-    sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+#     for row in rows:
+#         for i, value in enumerate(row):
+#             widths[i] = max(widths[i], len(str(value)))
 
-    table_lines.append(sep)
+#     sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
 
-    table_lines.append(
-        "| " +
-        " | ".join(
-            headers[i].ljust(widths[i])
-            for i in range(len(headers))
-        ) +
-        " |"
-    )
+#     table_lines.append(sep)
 
-    table_lines.append(sep)
+#     table_lines.append(
+#         "| " +
+#         " | ".join(
+#             headers[i].ljust(widths[i])
+#             for i in range(len(headers))
+#         ) +
+#         " |"
+#     )
 
-    for row in rows:
-        table_lines.append(
-            "| " +
-            " | ".join(
-                str(row[i]).ljust(widths[i])
-                for i in range(len(row))
-            ) +
-            " |"
-        )
+#     table_lines.append(sep)
 
-    table_lines.append(sep)
+#     for row in rows:
+#         table_lines.append(
+#             "| " +
+#             " | ".join(
+#                 str(row[i]).ljust(widths[i])
+#                 for i in range(len(row))
+#             ) +
+#             " |"
+#         )
 
-    # SUMMARY
-    unavailable_books = sum(
-        1 for row in rows
-        if row[4] == 0
-    )
+#     table_lines.append(sep)
 
-    table_lines.append("")
-    table_lines.append("Summary")
-    table_lines.append(f"- Total Active Book Titles : {len(active_books)}")
-    table_lines.append(f"- Total Book Copies        : {total_copies}")
-    table_lines.append(f"- Borrowed Copies          : {total_borrowed}")
-    table_lines.append(f"- Available Copies         : {total_available}")
-    table_lines.append(f"- Unavailable Book Titles  : {unavailable_books}")
+#     # SUMMARY
+#     unavailable_books = sum(
+#         1 for row in rows
+#         if row[4] == 0
+#     )
 
-    # TERMINAL
-    print()
+#     table_lines.append("")
+#     table_lines.append("Summary")
+#     table_lines.append(f"- Total Active Book Titles : {len(active_books)}")
+#     table_lines.append(f"- Total Book Copies        : {total_copies}")
+#     table_lines.append(f"- Borrowed Copies          : {total_borrowed}")
+#     table_lines.append(f"- Available Copies         : {total_available}")
+#     table_lines.append(f"- Unavailable Book Titles  : {unavailable_books}")
 
-    for text in table_lines:
-        print(text)
+#     # TERMINAL
+#     print()
 
-    # SAVE TXT
-    report_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "book_availability_report.txt"
-    )
+#     for text in table_lines:
+#         print(text)
 
-    with open(report_path, "w", encoding="utf-8") as f:
-        for text in table_lines:
-            f.write(text + "\n")
+#     # SAVE TXT
+#     report_path = os.path.join(
+#         os.path.dirname(os.path.abspath(__file__)),
+#         "book_availability_report.txt"
+#     )
 
-    print(f"\n✅ Report generated: {report_path}")
+#     with open(report_path, "w", encoding="utf-8") as f:
+#         for text in table_lines:
+#             f.write(text + "\n")
 
-    # เปิด TXT อัตโนมัติ
-    os.startfile(report_path)
+#     print(f"\n✅ Report generated: {report_path}")
+
 
     ############################################# HEADER ###########################################################
     now = datetime.now(timezone(timedelta(hours=7)))
     offset = now.strftime("%z")
     offset = offset[:3] + ":" + offset[3:]
 
-    table_lines = []
-    table_lines.append("Library Borrow System — Overdue Books Report")
-    table_lines.append(f"Generated At : {now.strftime('%Y-%m-%d %H:%M:%S')} ({offset})")
-    table_lines.append("App Version  : 1.0")
-    table_lines.append("Endianness   : Little-Endian")
-    table_lines.append("Encoding     : UTF-8 (fixed-length)")
-    table_lines.append("")
+   
 
     ############################################# TABLE ############################################################
     headers = ["Member ID", "Member Name", "Email", "Book ID", "Book Title", "Loan Date", "Due Date", "Overdue"]
@@ -1387,22 +1356,24 @@ def manage_report():
     while True:
         print("\n--- Manage Report ---")
         print("1. Borrowing History Report")
-        print("2. Book Availability Report")
-        print("3. Back to Main Menu")
+        print("2. Books Report")
+        print("3. Users Report")
+        print("4. Back to Main Menu")
 
-        choice = input("Select an option (1-3): ")
+        choice = input("Select an option (1-4): ")
 
         if choice == "1":
             menu_borrowing_history_report()
-
         elif choice == "2":
-            menu_book_availability_report()
-
+            menu_books_report()  
         elif choice == "3":
+            menu_users_report()
+        elif choice == "4":
             break
 
+
         else:
-            print("\n❌ Invalid option! Please select 1-3.")
+            print("\n❌ Invalid option! Please select 1-4.")
 ################################################# MENU #################################################################
 
 main_menu()#
