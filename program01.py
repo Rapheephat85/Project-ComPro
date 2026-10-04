@@ -942,26 +942,26 @@ def menu_borrowing_history_report():
    
 
     ############################################# TABLE ############################################################
-    headers = ["Member ID", "Member Name", "Email", "Book ID", "Book Title", "Loan Date", "Due Date", "Overdue"]
+    # headers = ["Member ID", "Member Name", "Email", "Book ID", "Book Title", "Loan Date", "Due Date", "Overdue"]
 
-    widths = [len(h) for h in headers]
-    for r in rows:
-        for i, c in enumerate(r):
-            widths[i] = max(widths[i], len(str(c)))
+    # widths = [len(h) for h in headers]
+    # for r in rows:
+    #     for i, c in enumerate(r):
+    #         widths[i] = max(widths[i], len(str(c)))
 
-    sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+    # sep = "+" + "+".join("-" * (w + 2) for w in widths) + "+"
 
-    table_lines.append(sep)
-    table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
-    table_lines.append(sep)
-    for r in rows:
-        table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r)) + " |")
-    table_lines.append(sep)
+    # table_lines.append(sep)
+    # table_lines.append("| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |")
+    # table_lines.append(sep)
+    # for r in rows:
+    #     table_lines.append("| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(r)) + " |")
+    # table_lines.append(sep)
 
     ############################################# SUMMARY ##########################################################
-    table_lines.append("")
-    table_lines.append("Summary")
-    table_lines.append(f"- Total Overdue Items : {len(rows)}")
+    # table_lines.append("")
+    # table_lines.append("Summary")
+    # table_lines.append(f"- Total Overdue Items : {len(rows)}")
 
     ############################################# TERMINAL #########################################################
     print()
