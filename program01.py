@@ -969,11 +969,11 @@ def menu_borrowing_history_report():
         print(text)
 
     ############################################# SAVE FILE TXT ####################################################
-    with open("overdue_report.txt", "w", encoding="utf-8") as f:
-        for text in table_lines:
-            f.write(text + "\n")
+    # with open("overdue_report.txt", "w", encoding="utf-8") as f:
+    #     for text in table_lines:
+    #         f.write(text + "\n")
 
-    print("\n✅ Report generated: overdue_report.txt")
+    # print("\n✅ Report generated: overdue_report.txt")
 
 
 ############################################# USERS REPORT #############################################################
@@ -1370,8 +1370,6 @@ def manage_report():
             menu_users_report()
         elif choice == "4":
             break
-
-
         else:
             print("\n❌ Invalid option! Please select 1-4.")
 ################################################# MENU #################################################################
