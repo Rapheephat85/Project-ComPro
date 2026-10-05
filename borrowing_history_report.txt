@@ -1,17 +1,18 @@
 Library Borrow System — Borrowing History Report
-Generated At : 2026-10-04 16:58:23 (+07:00)
+Generated At : 2026-10-05 14:55:15 (+07:00)
 App Version  : 1.0
 Endianness   : Little-Endian
 Encoding     : UTF-8 (fixed-length)
 
-+---------------------+---------+---------------------------+-----------+-------------+------------+-------------+----------+
-| Timestamp           | Book ID | Book Title                | Member ID | Member Name | Loan Date  | Return Date | Status   |
-+---------------------+---------+---------------------------+-----------+-------------+------------+-------------+----------+
-| 2026-10-01 21:26:49 | 1001    | COMPUTER NETWORKS AND ... | 69001     | Daniel      | 2026/10/01 | 2026/10/31  | Borrowed |
-+---------------------+---------+---------------------------+-----------+-------------+------------+-------------+----------+
++---------------------+---------+------------+-----------+-------------+------------+----------+
+| Timestamp           | Book ID | Book Title | Member ID | Member Name | Date       | Status   |
++---------------------+---------+------------+-----------+-------------+------------+----------+
+| 2026-10-05 14:46:14 | 1020    | Cartoon    | 69001     | Messi       | 2026/10/05 | Borrowed |
+| 2026-10-05 14:54:15 | 1020    | Cartoon    | 69001     | Messi       | 2026/10/05 | Returned |
++---------------------+---------+------------+-----------+-------------+------------+----------+
 
 Summary
-- Total History Records  : 1
-- Total Transactions     : 1
+- Total History Records  : 2
+- Total Transactions     : 2
 - Total Borrow           : 1
-- Total Return           : 0
+- Total Return           : 1

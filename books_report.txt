@@ -1,38 +1,35 @@
 Library Borrow System — Books Report
-Generated At : 2026-10-04 16:46:56 (+07:00)
+Generated At : 2026-10-05 14:55:22 (+07:00)
 App Version  : 1.0
 Endianness   : Little-Endian
 Encoding     : UTF-8 (fixed-length)
-Period       : Last 7 Days
 
-+------+---------------------------------------------+--------------+---------------+--------+
-| ID   | Book Title                                  | Total Copies | 1 Week Borrow | Usage  |
-+------+---------------------------------------------+--------------+---------------+--------+
-| 1001 | COMPUTER NETWORKS AND INTERNETS             | 10           | 1             | 10.00% |
-| 1002 | IOS PROGRAMMING                             | 10           | 0             | 0.00%  |
-| 1003 | AI-ASSISTED PROGRAMMING                     | 12           | 0             | 0.00%  |
-| 1004 | INTRODUCTION TO PROGRAMMING WITH JAVA       | 20           | 0             | 0.00%  |
-| 1005 | MUST KNOW HIGH SCHOOL COMPUTER PROGRAMMI... | 15           | 0             | 0.00%  |
-| 1006 | DIGITAL MAVERICK                            | 10           | 0             | 0.00%  |
-| 1007 | CONCEPTS OF PROGRAMMING LANGUAGES           | 12           | 0             | 0.00%  |
-| 1008 | BAYESIAN METHODS FOR HACKERS                | 20           | 0             | 0.00%  |
-| 1009 | C PROGRAMMING ABSOLUTE BEGINNER'S GUIDE     | 10           | 0             | 0.00%  |
-| 1010 | R PROGRAMMING FOR MASS SPECTROMETRY         | 18           | 0             | 0.00%  |
-| 1011 | DATABASE SYSTEMS                            | 25           | 0             | 0.00%  |
-| 1012 | MODERN DATABASE MANAGEMENT                  | 15           | 0             | 0.00%  |
-| 1013 | PATRIOT                                     | 20           | 0             | 0.00%  |
-| 1014 | PLUCKED                                     | 10           | 0             | 0.00%  |
-| 1015 | COMPUTER SYSTEMS                            | 15           | 0             | 0.00%  |
-| 1016 | ENGLISH LANGUAGE SYSTEMS                    | 20           | 0             | 0.00%  |
-| 1017 | DIGITAL SAT STUDY GUIDE                     | 16           | 0             | 0.00%  |
-| 1018 | BUSINESS PARTNER A1                         | 20           | 0             | 0.00%  |
-| 1019 | COMPUTER APPLICATION                        | 15           | 0             | 0.00%  |
-| 1020 | SWIFT FOR PROGRAMMERS                       | 20           | 0             | 0.00%  |
-+------+---------------------------------------------+--------------+---------------+--------+
++------+---------------------------------------------+--------------+----------+-----------+
+| ID   | Book Title                                  | Total Copies | Borrowed | Available |
++------+---------------------------------------------+--------------+----------+-----------+
+| 1001 | The Architecture of Global Networks         | 10           | 0        | 10        |
+| 1002 | Swift & iOS Application Blueprint           | 10           | 0        | 10        |
+| 1003 | Generative AI in Software Engineering       | 12           | 0        | 12        |
+| 1004 | Object-Oriented Programming with Java       | 20           | 0        | 20        |
+| 1005 | Coding Basics for Young Innovators          | 15           | 0        | 15        |
+| 1006 | Disruptive Tech Leaders of the Future       | 10           | 0        | 10        |
+| 1007 | Principles of Modern Programming Syntax     | 12           | 0        | 12        |
+| 1008 | Practical Bayesian Inference & Data Scie... | 20           | 0        | 20        |
+| 1009 | C Language From Scratch to Mastery          | 10           | 0        | 10        |
+| 1010 | Statistical Proteomics & R Analytics        | 18           | 0        | 18        |
+| 1011 | Enterprise Database Design & Architectur... | 25           | 0        | 25        |
+| 1012 | Cloud Database Operations & Strategy        | 15           | 0        | 15        |
+| 1013 | Voices of Freedom and Resistance            | 20           | 0        | 20        |
+| 1014 | The Feather's Edge: A Modern Tale           | 10           | 0        | 10        |
+| 1015 | Low-Level Computing & System Architectur... | 15           | 0        | 15        |
+| 1016 | Advanced Syntax & Linguistic Structures     | 20           | 0        | 20        |
+| 1017 | Ultimate Digital SAT Prep & Strategies      | 16           | 0        | 16        |
+| 1018 | Global Professional English Foundation      | 20           | 0        | 20        |
+| 1019 | Productivity Tools & Software Applicatio... | 15           | 0        | 15        |
+| 1020 | Cartoon                                     | 11           | 1        | 10        |
++------+---------------------------------------------+--------------+----------+-----------+
 
 Summary
 - Total Book Titles         : 20
-- Total Book Copies         : 313
-- Borrowed in Last 7 Days   : 1
-- Book Usage Percentage     : 0.32%
+- Total Book Copies         : 304
 - Total Borrowed Times      : 1

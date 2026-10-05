@@ -1,28 +1,28 @@
 Library Borrow System — Users Report
-Generated At : 2026-10-04 16:35:42 (+07:00)
+Generated At : 2026-10-05 14:55:33 (+07:00)
 App Version  : 1.0
 Endianness   : Little-Endian
 Encoding     : UTF-8 (fixed-length)
 
-+-----------+-------------+--------------------+------------+----------+----------+---------------------------------+---------+
-| Member ID | Member Name | Email              | Birth Year | Max Loan | Borrowed | Borrowed Books                  | Status  |
-+-----------+-------------+--------------------+------------+----------+----------+---------------------------------+---------+
-| 69001     | Daniel      | Daniel@gmail.com   | 2003       | 5        | 1        | COMPUTER NETWORKS AND INTERNETS | Active  |
-| 69002     | Michael     | Michael@gmail.com  | 2004       | 5        | 0        | -                               | Active  |
-| 69003     | Benjamin    | Benjamin@gmail.com | 2000       | 5        | 0        | -                               | Active  |
-| 69004     | Matthew     | Matthew@gmail.com  | 2006       | 5        | 0        | -                               | Active  |
-| 69005     | Sofia       | Sofia@gmail.com    | 2005       | 5        | 0        | -                               | Active  |
-| 69006     | Thomas      | Thomas@gmail.com   | 2006       | 5        | 0        | -                               | Active  |
-| 69007     | Henry       | Henry@gmail.com    | 1999       | 5        | 0        | -                               | Active  |
-| 69008     | Steven      | Steven@gmail.com   | 1997       | 5        | 0        | -                               | Active  |
-| 69009     | Olivia      | Olivia@gmail.com   | 2009       | 5        | 0        | -                               | Active  |
-| 69010     | Lucas       | Lucas@gmail.com    | 1995       | 5        | 0        | -                               | Active  |
-| 5         | 5           | 5                  | 55         | 5        | 0        | -                               | Deleted |
-+-----------+-------------+--------------------+------------+----------+----------+---------------------------------+---------+
++-----------+-------------+-----------------------+------------+----------+----------+----------------+---------+
+| Member ID | Member Name | Email                 | Birth Year | Max Loan | Borrowed | Borrowed Books | Status  |
++-----------+-------------+-----------------------+------------+----------+----------+----------------+---------+
+| 69001     | Messi       | Messi@gmail.com       | 1990       | 3        | 0        | -              | Active  |
+| 69002     | Alexander   | alexander@gmail.com   | 2005       | 3        | 0        | -              | Active  |
+| 69003     | Charlotte   | charlotte@gmail.com   | 2004       | 3        | 0        | -              | Active  |
+| 69004     | William     | william@gmail.com     | 2009       | 3        | 0        | -              | Active  |
+| 69005     | Isabella    | isabella@gmail.com    | 2008       | 3        | 0        | -              | Active  |
+| 69006     | Daniel      | daniel@gmail.com      | 2007       | 3        | 0        | -              | Active  |
+| 69007     | Victoria    | victoria@gmail.com    | 1998       | 3        | 0        | -              | Active  |
+| 69008     | Christopher | christopher@gmail.com | 1996       | 3        | 0        | -              | Active  |
+| 69009     | Amelia      | amelia@gmail.com      | 2001       | 3        | 0        | -              | Active  |
+| 69010     | Ethan       | ethan@gmail.com       | 1994       | 3        | 0        | -              | Active  |
+| 5         | 5           | 5                     | 55         | 5        | 0        | -              | Deleted |
++-----------+-------------+-----------------------+------------+----------+----------+----------------+---------+
 
 Summary
 - Total Members (records)     : 11
 - Active Members              : 10
 - Deleted Members             : 1
-- Members Currently Borrowing : 1
-- Members Not Borrowing       : 10
+- Members Currently Borrowing : 0
+- Members Not Borrowing       : 11

@@ -425,6 +425,15 @@ def menu_borrow_book():
         print(f"\n❌ Member ID {member_id} not found or not active")
         return
 
+    # 📌 เพิ่มเงื่อนไขตรวจสอบว่า สมาชิกคนนี้กำลังยืมหนังสือเล่มนี้อยู่แล้วหรือไม่ (ยืมซ้ำเล่มเดิมไม่ได้)
+    already_borrowed_this_book = any(
+        l["member_id"] == member_id and l["book_id"] == book_id 
+        for l in current_loans
+    )
+    if already_borrowed_this_book:
+        print(f"\n❌ Member ID {member_id} is already borrowing this book (Limit: 1 copy per book per member).")
+        return
+
     today = datetime.now().strftime("%Y/%m/%d")
     due_date = (datetime.now() + timedelta(days=30)).strftime("%Y/%m/%d")
 
@@ -439,7 +448,7 @@ def menu_borrow_book():
     )
 
     print(f"\n✅ Member '{member['name']}' borrowed '{book['title']}' until {due_date}")
-
+    
 def menu_return_book():
     print("\n=== Return Book ===")
 
@@ -642,12 +651,15 @@ def menu_borrowing_history_report():
         if len(book_title) > 25:
             book_title = book_title[:22] + "..."
 
-        # อ้างอิงและทำความสะอาดชื่อสมาชิกแบบเดียวกับ menu_users_report
+        # ทำความสะอาดชื่อสมาชิก
         member_name = member["name"].rstrip("\x00").strip() if member else "Unknown"
         if len(member_name) > 20:
             member_name = member_name[:17] + "..."
 
         status = "Borrowed" if loan["is_rented_after"] == 1 else "Returned"
+
+        # เลือกใช้วันที่ตามประเภทรายการ (ถ้าเป็นการยืมใช้ loan_date ถ้าเป็นการคืนใช้ return_date)
+        date_val = loan["loan_date"] if loan["op_code"] == 1 else loan["return_date"]
 
         rows.append([
             loan["ts"],
@@ -655,8 +667,7 @@ def menu_borrowing_history_report():
             book_title,
             loan["member_id"],
             member_name,
-            loan["loan_date"],
-            loan["return_date"],
+            date_val,
             status
         ])
 
@@ -680,8 +691,7 @@ def menu_borrowing_history_report():
         "Book Title",
         "Member ID",
         "Member Name",
-        "Loan Date",
-        "Return Date",
+        "Date",
         "Status"
     ]
     widths = [len(h) for h in headers]
@@ -723,7 +733,6 @@ def menu_borrowing_history_report():
         for text in table_lines:
             f.write(text + "\n")
     print("\n✅ Report generated: borrowing_history_report.txt")
-
 
 ############################################# USERS REPORT #############################################################
 def menu_users_report():
@@ -923,21 +932,19 @@ def menu_books_report():
     table_lines.append("App Version  : 1.0")
     table_lines.append("Endianness   : Little-Endian")
     table_lines.append("Encoding     : UTF-8 (fixed-length)")
-    table_lines.append("Period       : Last 7 Days")
     table_lines.append("")
 
     ############################################# TABLE ############################################################
-    headers = ["ID", "Book Title", "Total Copies", "1 Week Borrow", "Usage"]
+    headers = ["ID", "Book Title", "Total Copies", "Borrowed", "Available"]
     rows = []
 
     for book_id, title, copies, weekly_times in report_data:
-        # คำนวณ % การยืมใน 1 สัปดาห์ของเล่มนี้ เปรียบเทียบกับ Total Copies ของเล่มนี้
-        if copies > 0:
-            book_usage = (weekly_times / copies) * 100
-        else:
-            book_usage = 0
+        # คำนวณจำนวนหนังสือที่เหลืออยู่ (Available) = Total Copies - Borrowed
+        # ใช้ max(0, ...) เพื่อป้องกันค่าติดลบในกรณีข้อมูลยืมเกินจำนวนสำเนา
+        available = max(0, copies - weekly_times)
+        
         rows.append(
-            [book_id, title, copies, weekly_times, f"{book_usage:.2f}%"]
+            [book_id, title, copies, weekly_times, available]
         )
 
     widths = [len(h) for h in headers]
@@ -968,10 +975,6 @@ def menu_books_report():
     table_lines.append("Summary")
     table_lines.append(f"- Total Book Titles         : {total_books}")
     table_lines.append(f"- Total Book Copies         : {total_all_copies}")
-    table_lines.append(f"- Borrowed in Last 7 Days   : {weekly_total}")
-    table_lines.append(
-        f"- Book Usage Percentage     : {overall_usage_percent:.2f}%"
-    )
     table_lines.append(
         f"- Total Borrowed Times      : {total_borrowed_times_all}"
     )
